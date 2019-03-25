@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>My Chat</title>
+
+    <script src="https://www.gstatic.com/firebasejs/5.8.6/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyBVCVzvBiAx4gtwUmFYpxtvfVGZmZYk-sE",
+            authDomain: "max111.firebaseapp.com",
+            databaseURL: "https://max111.firebaseio.com",
+            projectId: "max111",
+            storageBucket: "max111.appspot.com",
+            messagingSenderId: "318381868796"
+        };
+        firebase.initializeApp(config);
+
+
+
+    //link to database  
+        var commentsRef = firebase.database().ref('comments/');
+    //write data to database
+        function writeData(name,email,content){
+            commentsRef.push(
+                {
+                    name:name,
+                    email:email,
+                    content:content
+                }
+            )
+        }
+    //add/sent data to database
+        window.onload = function(){
+            function addComment(){
+                var name = document.getElementById('name').value
+                var email= document.getElementById('email').value
+                var content = document.getElementById('content').value
+
+                writeData(name,email,content)
+                document.getElementById('comment-form').reset();
+            } 
+            //click buttopn sent
+            document.getElementById('button').addEventListener('click',addComment)
+           
+            //get and show date when database update
+            commentsRef.on('child_added',function(data){
+                addCommentElement(data.val().name,data.val().content)
+            })
+
+            function addCommentElement(name,content){
+                
+                var ele = document.getElementById('comments')
+                //可用appendchild
+                ele.innerHTML += '<li class="list-group-item"><samll>'+name+': </samll>'+content+'</li>'
+            }
+        }
+
+    </script>
+
+    <link rel="stylesheet" type="text/css"
+        href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+
+</head>
+
+<body>
+    <h1>live Chat</h1>
+    <hr>
+    <div class="container">
+        <!-- input data area -->
+        <div class="row">
+            <form action="" class="form-horizontal col-12" id="comment-form">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input class="form-control" type="text" name="name" id="name" placeholder="Input your name">
+
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input class="form-control" type="email" name="email" id="email" placeholder="Input your E-mail">
+                </div>
+
+
+                <div class="form-group">
+
+                    <textarea class="form-control" id="content"></textarea>
+                </div>
+
+                <button id="button" type="button" class="btn btn-danger">Send</button>
+
+            </form>
+
+
+        </div>
+
+        <!-- comments -->
+
+        <div class="row">
+
+            <ul class="list-group list-group-flush" id="comments">
+                <li class="list-group-item">Comments show in here</li>
+                <li class="list-group-item">---------------------</li>
+                
+            </ul>
+
+
+        </div>
+    </div>
+
+
+
+</body>
+
+</html>
